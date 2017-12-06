@@ -71,7 +71,7 @@ namespace fb {
             return callbacks.empty();
         }
 
-        private:
+        protected:
         template<class X, class Y> callback_t make_lambda(Y * on, void (X::*apply)(Args...))
         {
             static_assert(std::is_base_of<fb::Slottable, Y>::value);
