@@ -1,4 +1,4 @@
-# FBLIB {#mainpage}
+# FBLIB
 
 Library containing reusable code so that at some point I can get on with bigger projects.
 
