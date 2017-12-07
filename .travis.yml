@@ -1,5 +1,24 @@
 language: cpp
-        
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+    - secure: "LOjwrIvJ0DoG0YGOdUZzgxT5syeFmZr1ls1M67CpwI46z+JJ1/joRu5BDA0OyMpKP2n/b9p/MU6Pk0oZyNeNOjX1TivG12y4lEV+EsgMezOb1Hej3o4il/beijRlPCq87JdMwuniOqpnjGGVNgoUcJzQBquVP7yHuDzzIYe0XBKQyvvPR2leFM1JOKptp4v7Pmn6hWBpyrwrDa8/ezmhsNFO+7Ir7BY5s+u9p6dzcGILXg9MYRlltUJMc8pttW0qWBX9PjlAim8z1i4d3fbyreZqNzSWIWEdDJue83RKBzdrpN627aEA5ffj8PLQU6R1BuYRlCQ7sBL2QSS7W4lfp2jwC8YDhCdkOYwLOvt64ACiNFXNbk5sTNqtpAVcRKGoeT6xr5TBIT0yBEnLkGQSSpN5nbAztrJt0/1X6EjdtLNmbS8GVGDnaNDyXrhIc9zXpFjHU41P+jiYt0BLnd4kfRPTzh/0uExDzsgrIn8JxJj1I0aDWUePRroucJHAIRFDE1qlVbfU8voYZYn8RafVw8+zeVTjDd2Z+BE0Q9AZkA0+NupH9cx+ybpG/D+e0rbXHcQwf5sTkl14OJ+T8gWQtonnpmaH7mTI3ihtses1D7pImR5ilVKLosY9sIGi0MMhLzkSZibQpusZWzBUka20DySgy7ciXUN1XE+OdifPVjs="
+
+before_install:
+   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "FlatBartender/FBLib"
+      description: "Lib for reusable stuff I do"
+    notification_email: flat.bartender@gmail.com
+    build_command_prepend: "cmake ."
+    build_command:   "make -j8"
+    branch_pattern: coverity_scan       
+
 matrix:
   include:
     - compiler: gcc
@@ -18,16 +37,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
-            - lcov
       env: 
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && CXXFLAGS=--coverage"
-      after_success:
-        - cd ${TRAVIS_BUILD_DIR}
-        - ls -Rla
-        - lcov --directory . --capture --output-file coverage.info
-        - lcov --remove coverage.info '/usr/*' --output-file coverage.info
-        - lcov --list coverage.info
-        - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
     - compiler: clang
       addons:
         apt:
@@ -44,4 +55,4 @@ before_install:
 
 script: 
     - cmake .
-    - make
+    - make -j8
