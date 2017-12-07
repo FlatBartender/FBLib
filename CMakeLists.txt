@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.2)
+project(FBLib)
+
+set(CMAKE_CXX_STANDARD 17)
+
+set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/)
+
+file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
+file(GLOB_RECURSE HEADER_FILES "include/*.hpp")
+
+add_library(fblib ${SOURCE_FILES} ${HEADER_FILES})

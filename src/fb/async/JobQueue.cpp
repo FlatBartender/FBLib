@@ -1,15 +1,24 @@
-#include "JobQueue.hpp"
+/**
+ * @file JobQueue.cpp
+ * @brief Implementation of fb::async::JobQueue
+ * @author Flat Bartender <flat.bartender@gmail.com>
+ * @version 1.0.0
+ * @date 2017-12-07
+ */
+#include "fb/async/JobQueue.hpp"
 
-fb::JobQueue::JobQueue(uint32_t thread_number) : semaphore(0), destroy(false)
+using namespace fb::async;
+
+JobQueue::JobQueue(uint32_t thread_number) : semaphore(0), destroy(false)
 {
     // Create worker threads
     for (uint32_t i = 0; i < thread_number; i++)
     {
-        workers.push_back(std::thread(&fb::JobQueue::worker, this));
+        workers.push_back(std::thread(&JobQueue::worker, this));
     }
 }
 
-fb::JobQueue::~JobQueue()
+JobQueue::~JobQueue()
 {
     // Threads are destroyable
     destroy = true;
@@ -25,7 +34,7 @@ fb::JobQueue::~JobQueue()
     }
 }
 
-void fb::JobQueue::queue(std::function<void()> job)
+void JobQueue::queue(std::function<void()> job)
 {
     jobs_mtx.lock();
     jobs.push(job);
@@ -33,7 +42,7 @@ void fb::JobQueue::queue(std::function<void()> job)
     jobs_mtx.unlock();
 }
 
-void fb::JobQueue::worker()
+void JobQueue::worker()
 {
     // Forever
     while (true)
