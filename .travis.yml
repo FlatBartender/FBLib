@@ -22,8 +22,8 @@ matrix:
       env: 
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && CXXFLAGS=--coverage"
       after_success:
-        - ls -Rla
         - cd ${TRAVIS_BUILD_DIR}
+        - ls -Rla
         - lcov --directory . --capture --output-file coverage.info
         - lcov --remove coverage.info '/usr/*' --output-file coverage.info
         - lcov --list coverage.info
