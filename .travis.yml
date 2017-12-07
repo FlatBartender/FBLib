@@ -1,7 +1,40 @@
 language: cpp
-compiler:
-    - clang
-    - gcc
+        
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+      env: CXX=g++-5
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - lcov
+      env: CXX=g++-7
+      after_success:
+        - cd ${TRAVIS_BUILD_DIR}
+        - lcov --directory . --capture --output-file coverage.info
+        - lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        - lcov --list coverage.info
+        - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0 
+          packages:
+            - clang-5.0
+      env: CXX=clang++-5.0
+
 script: 
     - cmake .
     - make
